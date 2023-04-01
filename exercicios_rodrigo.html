@@ -1,0 +1,178 @@
+<html>
+
+<head>
+    <title>Controlador de Exers de Rodrigo</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            background-color: #dfdfdf;
+            color: #424242;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            line-height: 1.2;
+            color: #424242;
+        }
+
+        p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #424242;
+        }
+
+        a {
+            color: #2196f3;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #1976d2;
+            text-decoration: underline;
+        }
+
+        button {
+            background-color: #2196f3;
+            color: #ffffff;
+            border: none;
+            border-radius: 2px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1976d2;
+            color: #ffffff;
+        }
+
+        .container-title {
+            cursor: pointer;
+            border-radius: 10px 10px 0px 0px;
+            background-color: #1976d2;
+            padding: 1px;
+        }
+
+        .container-body {
+            border-radius: 0px 0px 10px 10px;
+            background-color: #fafafa;
+            padding: 10px 50px 10px 10px;
+        }
+
+        .container {
+            box-shadow: 3px 5px 10px #b1b1b1;
+            max-width: fit-content;
+            border-radius: 10px;
+            margin-top: 30px;
+            transition: 0.5s;
+        }
+
+        .container:hover{
+            transform: translate(0, -10px);
+        }
+
+        .title {
+            color: #fafafa;
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Séries de Exer</h1>
+    <p>
+        Não precisamos fazer as séries continuamente. Podemos misturá-las se tivermos vontade.
+        O importante é fazer tudo no final.
+    </p>
+
+    <div class="container">
+        <div class="container-title">
+            <h2 class="title">Core</h2>
+        </div>
+        <div class="container-body">
+            <ul>
+                <li>3x 10 prancha de mão com toques no tornozelo (encaixar bem abdomen)</li>
+                <li>3x 15 abdominal normal (ou talvez o sem apoio)</li>
+                <li>3x 20 abdominal bicicleta (ou bem controlado ou enlouquecendo)</li>
+                <li>3x 10 sit ups</li>
+                <li>3x 10 prancha alternando os membros de apoio em diagonal</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="container-title">
+            <h2 class="title">Braços</h2>
+        </div>
+        <div class="container-body">
+            <p><b>Santo Antônio</b></p>
+            <ul>
+                <li>3x10 apoios</li>
+                <li>3x10 braços flexionados 90° elevação lateral</li>
+                <li>3x10 elevação frontal</li>
+                <li>3x10 passada da cabeça</li>
+                <li>3x10 triceps</li>
+            </ul>
+            <p><b>Porto Alegre</b></p>
+            <ul>
+                <li>TODO</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="container">
+        <div class="container-title">
+            <h2 class="title">Pernas</h2>
+        </div>
+        <div class="container-body">
+            <ul>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const saveCurrentExercise = (name) => {
+            alert(`Boa, meu guri!! Fizeste ${name} hoje.`) //Motivating our lil boy (me)
+            localStorage['current_exercise'] = name
+            evalDatabase()
+        }
+
+        const evalDatabase = () => {
+            const current_exercise = localStorage['current_exercise']
+            if (!Boolean(current_exercise)) {
+                console.log('No exercise data found!')
+                return
+            }
+
+            for (let element of document.querySelectorAll('.container-title')){
+                //Tagging last done exercise
+                if (element.innerText == current_exercise) element.style['background-color'] = "green"
+                else element.style['background-color'] = ""
+            }
+        }
+
+        const bootstrap = () => {
+            const options = document.querySelectorAll('.container-title')
+            for (const option of options) {
+                option.onclick = () => saveCurrentExercise(option.innerText)
+            }
+        }
+
+        evalDatabase()
+        bootstrap()
+    </script>
+
+</body>
+
+</html>
