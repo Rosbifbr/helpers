@@ -19,3 +19,7 @@ end
 function android_emulator -d "Run predefined AVD in an Emulator (independent from Android Studio)"
     /home/rodrigo/Android/Sdk/emulator/emulator -avd Weak_API_27
 end
+
+function zypper_autoremove -d "Autoremove unused deps"
+    zypper rm (zypper pa --unneeded --orphaned | awk '{print $5}' | grep -vP 'Name|^$')
+end
