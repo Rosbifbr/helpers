@@ -23,3 +23,7 @@ end
 function zypper_autoremove -d "Autoremove unused deps"
     zypper rm (zypper pa --unneeded --orphaned | awk '{print $5}' | grep -vP 'Name|^$')
 end
+
+function phone_camera -d "Use phone as webcam"
+    scrcpy --video-source=camera --camera-size=1920x1080 --camera-facing=back --v4l2-sink=/dev/video0
+end
