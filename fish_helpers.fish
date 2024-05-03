@@ -17,7 +17,16 @@ function logcat_search -d "Logcat into app process"
 end
 
 function android_emulator -d "Run predefined AVD in an Emulator (independent from Android Studio)"
-    /home/rodrigo/Android/Sdk/emulator/emulator -avd Weak_API_27
+    /home/rodrigo/Android/Sdk/emulator/emulator -avd Shitty_Phone
+end
+
+function deploy_diff -d "Deploy git diff with passed branch to remote"
+   set remote_host $argv[1] &&
+   set master_branch $argv[2] &&
+   set file_list (git diff --name-only origin/$master_branch) &&
+
+   #copy shit
+   rsync -R $file_list $remote_host:~/rodrigo
 end
 
 function zypper_autoremove -d "Autoremove unused deps"
