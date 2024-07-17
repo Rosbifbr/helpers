@@ -17,7 +17,7 @@ function logcat_search -d "Logcat into app process"
 end
 
 function android_emulator -d "Run predefined AVD in an Emulator (independent from Android Studio)"
-    /home/rodrigo/Android/Sdk/emulator/emulator -avd Shitty_Phone
+    /home/rodrigo/Android/Sdk/emulator/emulator -avd default
 end
 
 function deploy_diff -d "Deploy git diff with passed branch to remote"
@@ -29,10 +29,16 @@ function deploy_diff -d "Deploy git diff with passed branch to remote"
    rsync -R $file_list $remote_host:~/rodrigo
 end
 
-function zypper_autoremove -d "Autoremove unused deps"
-    zypper rm (zypper pa --unneeded --orphaned | awk '{print $5}' | grep -vP 'Name|^$')
-end
-
 function phone_camera -d "Use phone as webcam"
     scrcpy --video-source=camera --camera-size=1920x1080 --camera-facing=back --v4l2-sink=/dev/video0
+end
+
+function parse_danfes -d "Parse a collection of SEFAZ fiscal notes for better data aggregation for the stationary bandit (taxes)"
+	#stringify PDFs 
+	for i in *.pdf; pdftotext $i; end
+	#pull relevant info
+	for i in *.txt; grep -P -A1 "[0-9]+/[0-9]+/[0-9]+|VLR. TOTAL" $i > parsed-$i; end
+	#aggregate
+	cat parsed* > danfe_output
+	rm *.txt #clear all
 end
