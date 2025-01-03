@@ -57,12 +57,14 @@ function tts -d "Text to speech with whisper.cpp"
             break
         end
     end
-    $WHISPER_ROOT/build/bin/whisper-stream -m $WHISPER_ROOT/models/ggml-large-v3-turbo-q5_0.bin -t 8 --step 0 --length 5000 -vth 0.6 -l $lang
+    $WHISPER_ROOT/build/bin/whisper-stream -m $WHISPER_ROOT/models/ggml-large-v3-turbo-q5_0.bin -t 8 --step 0 --length 10000 -vth 0.6 -l $lang
 end
 
 
 function speech -d "Use TTS function to speak. Then an an LLM to summarize what you said. https://www.gihub.com/rosbifbr/ask_rs is required."
-    tts >/tmp/whisper-transcript
-    cat /tmp/whisper-transcript | ask "Summarize the following recording into a coherent message in the language it is written on. Output ONLY the message.\nExample: Umm.. Uhh. Hey John,.. How are you doing? -> Hey, John. How are you doing?"
+    echo "Summarize the following recording into a coherent message in the language it is written on. Output ONLY the formatted message. No code, no comments. \nExample: Umm.. Uhh. Hey John,.. How are you doing? -> Hey, John. How are you doing?.\nRemember to remove repeated or wrong parts and format the input like a text message." >/tmp/whisper-transcript
+    tts >>/tmp/whisper-transcript
+    cat /tmp/whisper-transcript | ask
     rm /tmp/whisper-transcript
+    ask -c #clear convo
 end
