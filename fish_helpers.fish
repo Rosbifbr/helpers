@@ -48,8 +48,8 @@ function parse_danfes -d "Parse a collection of SEFAZ fiscal notes for better da
 end
 
 
-function tts -d "Text to speech with whisper.cpp"
-    set WHISPER_ROOT "/media/rodrigo/3f0623f2-dce1-4893-b3e3-61b6438216a2/whisper.cpp"
+function stt -d "Speech to text with whisper.cpp"
+    set WHISPER_ROOT "/media/hdd/whisper.cpp"
     set lang auto
     for arg in $argv
         if string match -q "-l *" $arg
@@ -57,14 +57,14 @@ function tts -d "Text to speech with whisper.cpp"
             break
         end
     end
-    $WHISPER_ROOT/build/bin/whisper-stream -m $WHISPER_ROOT/models/ggml-large-v3-turbo-q5_0.bin -t 8 --step 0 --length 10000 -vth 0.6 -l $lang
+    $WHISPER_ROOT/build/bin/whisper-stream -m $WHISPER_ROOT/models/ggml-large-v3-turbo-q5_0.bin -t 8 -vth 0.9 -l $lang 2>/dev/null
 end
 
 
-function speech -d "Use TTS function to speak. Then an an LLM to summarize what you said. https://www.gihub.com/rosbifbr/ask_rs is required."
-    echo "Summarize the following recording into a coherent message in the language it is written on. Output ONLY the formatted message. No code, no comments. \nExample: Umm.. Uhh. Hey John,.. How are you doing? -> Hey, John. How are you doing?.\nRemember to remove repeated or wrong parts and format the input like a text message." >/tmp/whisper-transcript
-    tts >>/tmp/whisper-transcript
+function speech -d "Use STT function to speak. Then an an LLM to summarize what you said. https://www.gihub.com/rosbifbr/ask_rs is required."
+    echo "Parse, format, and transform the following transcript into a clear and coherent message in its original language. Output only the formatted message without any code or comments. Remove repetitions and errors, and maintain the original perspective (e.g., first person). Example: 'Umm.. Uhh. Hey John,.. How are you <inaudible> doing?' -> 'Hey John, how are you doing?'" >/tmp/whisper-transcript
+    stt >>/tmp/whisper-transcript
     cat /tmp/whisper-transcript | ask
     rm /tmp/whisper-transcript
-    ask -c #clear convo
+    ask -c >/dev/null #clear convo silently
 end
