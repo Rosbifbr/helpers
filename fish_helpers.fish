@@ -68,3 +68,16 @@ function speech -d "Use STT function to speak. Then an an LLM to summarize what 
     rm /tmp/whisper-transcript
     ask -c >/dev/null #clear convo silently
 end
+
+function llm_complete -d "Get raw LLM completions"
+    set message $argv[1]
+    curl -X POST "https://api.x.ai/v1/completions" \
+        -H "Authorization: Bearer $X_API_KEY" \
+        -H "Content-Type: application/json" \
+        -d '{
+            "temperature": 1.1,
+            "model": "grok-beta",
+            "prompt": "'$message'",
+            "max_tokens": 300
+          }' | jq '.choices[0].text'
+end
