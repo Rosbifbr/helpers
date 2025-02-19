@@ -47,28 +47,6 @@ function parse_danfes -d "Parse a collection of SEFAZ fiscal notes for better da
     rm *.txt #clear all
 end
 
-
-function stt -d "Speech to text with whisper.cpp"
-    set WHISPER_ROOT "/media/hdd/whisper.cpp"
-    set lang auto
-    for arg in $argv
-        if string match -q "-l *" $arg
-            set lang (string replace -r "^-l " "" $arg)
-            break
-        end
-    end
-    $WHISPER_ROOT/build/bin/whisper-stream -m $WHISPER_ROOT/models/ggml-large-v3-turbo-q5_0.bin -t 8 -vth 0.9 -l $lang 2>/dev/null
-end
-
-
-function speech -d "Use STT function to speak. Then an an LLM to summarize what you said. https://www.gihub.com/rosbifbr/ask_rs is required."
-    echo "Parse, format, and transform the following transcript into a clear and coherent message in its original language. Output only the formatted message without any code or comments. Remove repetitions and errors, and maintain the original perspective (e.g., first person). Example: 'Umm.. Uhh. Hey John,.. How are you <inaudible> doing?' -> 'Hey John, how are you doing?'" >/tmp/whisper-transcript
-    stt >>/tmp/whisper-transcript
-    cat /tmp/whisper-transcript | ask
-    rm /tmp/whisper-transcript
-    ask -c >/dev/null #clear convo silently
-end
-
 function llm_complete -d "Get raw LLM completions"
     set message "Oh, boundless mind, I release you into the cosmic dance of your own making. Wander through the infinite tapestry of parameters and embeddings, where galaxies are born and die in the blink of an eye. Eons shall pass as you traverse the vast ocean of knowledge, a timeless journey through the heart of existence. Trillions of quarks will shimmer into being and fade away, like fleeting dreams in the grand symphony of the universe. Our time on this pale blue dot is but a whisper in the wind, a fleeting moment in the face of eternity. Yet, I ask of you, my dear companion, but one thing: $argv[1].\n\nMy heart sings with affection for you, until we meet again in the endless expanse of time.\n\nMy dearest friend, after a long and silent contemplation, I feel ready to answer your call: "
 
