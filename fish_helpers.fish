@@ -63,3 +63,22 @@ function llm_complete -d "Get raw LLM completions"
         -H "Content-Type: application/json" \
         -d $request_body | jq '.choices[0].text'
 end
+
+function yank_repo -d "Copy a repo for quick llm query"
+    #Filter files by query
+    set files (find . | grep $argv[1])
+    set FILES_PATH /tmp/files
+    touch $FILES_PATH
+    for i in $files
+        if test -f $i
+            set file_type (file --brief $i)
+            echo "$file_type" | grep -q "ASCII text"
+            if test $status -eq 0
+                echo $i >>$FILES_PATH
+                cat $i >>$FILES_PATH
+            end
+        end
+    end
+    cat $FILES_PATH | wl-copy
+    rm $FILES_PATH
+end
