@@ -17,7 +17,7 @@ function logcat_search -d "Logcat into app process"
 end
 
 function android_emulator -d "Run predefined AVD in an Emulator (independent from Android Studio)"
-    /home/rodrigo/Android/Sdk/emulator/emulator -avd default -gpu host
+    /home/rodrigo/Android/Sdk/emulator/emulator -avd default -noaudio -metrics-collection
 end
 
 function deploy_diff -d "Deploy git diff with passed branch to remote"
