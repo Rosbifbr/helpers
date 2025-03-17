@@ -17,7 +17,7 @@ function logcat_search -d "Logcat into app process"
 end
 
 function android_emulator -d "Run predefined AVD in an Emulator (independent from Android Studio)"
-    /home/rodrigo/Android/Sdk/emulator/emulator -avd default -gpu host
+    /home/rodrigo/Android/Sdk/emulator/emulator -avd default -noaudio -metrics-collection
 end
 
 function deploy_diff -d "Deploy git diff with passed branch to remote"
@@ -64,21 +64,30 @@ function llm_complete -d "Get raw LLM completions"
         -d $request_body | jq '.choices[0].text'
 end
 
-function yank_repo -d "Copy a repo for quick llm query"
-    #Filter files by query
-    set files (find . | grep $argv[1])
+function yank_repo -d "Dump a repo"
+    # Filter files by query
+    set files (find . | grep -P $argv[1])
+
+    # Apply exclusion regex if provided
+    if test (count $argv) -gt 1
+        set files (string join \n $files | grep -vP "$argv[2]")
+    end
+
     set FILES_PATH /tmp/files
-    touch $FILES_PATH
+    # Ensure the file is clean or created
+    echo -n >$FILES_PATH
+
     for i in $files
         if test -f $i
             set file_type (file --brief $i)
-            echo "$file_type" | grep -q "ASCII text"
-            if test $status -eq 0
-                echo $i >>$FILES_PATH
+            # Check if file_type contains "text" (more general than just ASCII)
+            if echo "$file_type" | grep -iq text
+                echo "-------- $i --------" >>$FILES_PATH
                 cat $i >>$FILES_PATH
+                echo "" >>$FILES_PATH # Add a newline for better separation
             end
         end
     end
-    cat $FILES_PATH | wl-copy
+    cat $FILES_PATH
     rm $FILES_PATH
 end
