@@ -17,14 +17,13 @@ function logcat_search -d "Logcat into app process"
 end
 
 function android_emulator -d "Run predefined AVD in an Emulator (independent from Android Studio)"
-    /home/rodrigo/Android/Sdk/emulator/emulator -avd default -noaudio -metrics-collection
+    /home/rodrigo/Android/Sdk/emulator/emulator -avd default -noaudio -metrics-collection -gpu host
 end
 
 function deploy_diff -d "Deploy git diff with passed branch to remote"
     set remote_host $argv[1] &&
         set master_branch $argv[2] &&
         set file_list (git diff --name-only origin/$master_branch) &&
-
         #copy shit
         rsync -R $file_list $remote_host:~/rodrigo
 end
@@ -61,33 +60,33 @@ function llm_complete -d "Get raw LLM completions"
     curl -sX POST "https://api.x.ai/v1/completions" \
         -H "Authorization: Bearer $X_API_KEY" \
         -H "Content-Type: application/json" \
-        -d $request_body | jq '.choices[0].text'
+        -d $request_body | yq -oj '.choices[0].text'
 end
 
 function yank_repo -d "Dump a repo"
-    # Filter files by query
-    set files (find . | grep -P $argv[1])
+    find . | grep -P $argv[1] >/tmp/file_list
 
     # Apply exclusion regex if provided
     if test (count $argv) -gt 1
-        set files (string join \n $files | grep -vP "$argv[2]")
+        grep -vP "$argv[2]" /tmp/file_list >/tmp/file_list_filtered
+        mv /tmp/file_list_filtered /tmp/file_list
     end
 
-    set FILES_PATH /tmp/files
     # Ensure the file is clean or created
-    echo -n >$FILES_PATH
+    echo -n >/tmp/files
 
-    for i in $files
+    for i in (cat /tmp/file_list)
         if test -f $i
             set file_type (file --brief $i)
             # Check if file_type contains "text" (more general than just ASCII)
             if echo "$file_type" | grep -iq text
-                echo "-------- $i --------" >>$FILES_PATH
-                cat $i >>$FILES_PATH
-                echo "" >>$FILES_PATH # Add a newline for better separation
+                echo "-------- $i --------" >>/tmp/files
+                cat $i >>/tmp/files
+                echo "" >>/tmp/files # Add a newline for better separation
             end
         end
     end
-    cat $FILES_PATH
-    rm $FILES_PATH
+    cat /tmp/files
+    rm /tmp/files
+    rm /tmp/file_list
 end
