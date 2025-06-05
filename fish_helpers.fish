@@ -49,18 +49,23 @@ end
 function llm_complete -d "Get raw LLM completions"
     set message "$argv"
 
+    # If no arguments are provided, read from stdin
+    if test (count $argv) -eq 0
+        set message (read -d '')
+    end
+
     set request_body "{
-      \"temperature\": 1.1,
+      \"temperature\": 0.9,
       \"model\": \"grok-2\",
       \"prompt\": \"$message\",
-      \"max_tokens\": 512 
+      \"max_tokens\": 256
     }"
 
     # curl -sX POST "https://api.deepseek.com/beta/completions" \
     curl -sX POST "https://api.x.ai/v1/completions" \
         -H "Authorization: Bearer $X_API_KEY" \
         -H "Content-Type: application/json" \
-        -d $request_body | yq -oj '.choices[0].text'
+        -d $request_body | yq '.choices[0].text'
 end
 
 function yank_repo -d "Dump a repo"
