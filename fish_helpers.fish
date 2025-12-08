@@ -2,16 +2,6 @@
 #Misc fish helpers
 #Copyright Rodrigo Ourique @ 2024. MIT License
 
-function ff -d "Fuzzy find files"
-    set final ".*"
-    for elem in $argv
-        set final "$final$elem.*"
-    end
-
-    #Find file finally
-    find . -iregex $final
-end
-
 function logcat_search -d "Logcat into app process"
     adb logcat --pid (adb shell ps | grep -Po "^[a-z0-9_]+\s+\K\d+(?=.*$argv)")
 end
